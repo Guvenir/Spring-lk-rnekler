@@ -16,13 +16,24 @@ public class Temp {
     private String id;
     private String temp;
     private String date;
+    private String time;
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
 
     public Temp() {
     }
 
-    public Temp(String temp, String date) {
+    public Temp(String temp, String date,String time) {
         this.temp = temp;
         this.date = date;
+        this.time = time;
+        
     }
 
     

@@ -7,6 +7,7 @@ package com.controllers;
 
 import com.dao.TempRepo;
 import com.models.Temp;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -14,6 +15,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -34,33 +36,32 @@ public class TempController {
     @RequestMapping(value = "/test", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
     public String test() {
-        return "test başarılı";
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+        Date date = new Date();
+        System.out.println(dateFormat.format(date)); //2014/08/06 15:59:48
+        return dateFormat.format(date) + "---" + timeFormat.format(date);
     }
 
     @RequestMapping(value = "/testsave", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public void testSave() {
-        tr.save(new Temp("test", "12.02.2016"));
+        //tr.save(new Temp("test", "12.02.2016"));
     }
-
+    
+    @CrossOrigin
     @RequestMapping(value = "/save/{temp}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
     public String save(@PathVariable("temp") String temp) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ") {
-            public StringBuffer format(Date date, StringBuffer toAppendTo, java.text.FieldPosition pos) {
-                StringBuffer toFix = super.format(date, toAppendTo, pos);
-                return toFix.insert(toFix.length() - 2, ':');
-            }
-        ;
-        };
-    // Usage:
-    System.out.println(dateFormat.format(new Date()));
-        tr.save(new Temp(temp, dateFormat.format(new Date())));
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+        Date date = new Date();
+        tr.save(new Temp(temp, dateFormat.format(date), timeFormat.format(date)));
         return temp + " " + dateFormat.format(new Date());
     }
-    
-    @RequestMapping(value = "/temp",method = RequestMethod.GET , produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+
+    @RequestMapping(value = "/temp", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
-    public List<Temp> getAllTemp(){
+    public List<Temp> getAllTemp() {
         return tr.findAll();
     }
 }
